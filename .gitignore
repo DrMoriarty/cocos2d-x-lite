@@ -156,3 +156,6 @@ tests/cpp-tests/Resources/audio
 /*/*/*/prebuilt-mk/Android.mk
 /*/*/*/*/prebuilt-mk/Android.mk
 *.xcscmblueprint
+
+cocos/platform/android/libcocos2dx/build
+cocos/scripting/js-bindings/proj.ios_mac/build
