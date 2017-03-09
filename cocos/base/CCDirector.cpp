@@ -59,8 +59,8 @@ THE SOFTWARE.
 #include "base/CCAutoreleasePool.h"
 #include "base/CCConfiguration.h"
 #include "base/CCAsyncTaskPool.h"
-#include "base/CCProfiling.h"
 #include "platform/CCApplication.h"
+#include "editor-support/spine/SkeletonBatch.h"
 
 #if CC_ENABLE_SCRIPT_BINDING
 #include "base/CCScriptSupport.h"
@@ -1026,6 +1026,7 @@ void Director::reset()
     GLProgramStateCache::destroyInstance();
     FileUtils::destroyInstance();
     AsyncTaskPool::destroyInstance();
+    spine::SkeletonBatch::destroyInstance();
     
     // cocos2d-x specific data structures
     UserDefault::destroyInstance();
@@ -1159,23 +1160,9 @@ void Director::showStats()
     static unsigned long prevCalls = 0;
     static unsigned long prevVerts = 0;
     static float prevDeltaTime  = 0.016f; // 60FPS
-    static const float FPS_FILTER = 0.02f;
-    static float fpsAccumulator = 0.f;
-    static int fpsCounter = 0;
-    static int fpsValue = 0;
+    static const float FPS_FILTER = 0.10f;
 
     _accumDt += _deltaTime;
-    fpsAccumulator += _deltaTime;
-    fpsCounter ++;
-    if(fpsAccumulator >= .5f) {
-        fpsValue = (float)fpsCounter / fpsAccumulator;
-        fpsCounter = 0;
-        fpsAccumulator = 0.f;
-        //log("************* PROFILER *************");
-        //CC_PROFILER_DISPLAY_TIMERS();
-        //CC_PROFILER_PURGE_ALL();
-        log("FPS: %d", fpsValue);
-    }
 
     if (_displayStats && _FPSLabel && _drawnBatchesLabel && _drawnVerticesLabel)
     {
@@ -1190,8 +1177,7 @@ void Director::showStats()
         // to make the FPS stable
         if (_accumDt > CC_DIRECTOR_STATS_INTERVAL)
         {
-            //sprintf(buffer, "%.1f / %.3f", _frameRate, _secondsPerFrame);
-            sprintf(buffer, "%d / %.1f / %.3f", fpsValue, _frameRate, _secondsPerFrame);
+            sprintf(buffer, "%.1f / %.3f", _frameRate, _secondsPerFrame);
             _FPSLabel->setString(buffer);
             _accumDt = 0;
         }

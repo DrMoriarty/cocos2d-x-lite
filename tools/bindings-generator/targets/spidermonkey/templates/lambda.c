@@ -22,20 +22,22 @@ do {
             #end while
             JS::RootedValue rval(cx);
             #if $arg_count > 0
-            bool succeed = func->invoke(${arg_count}, &largv[0], &rval);
+            bool succeed = func->invoke(JS::HandleValueArray::fromMarkedLocation(${arg_count}, largv), &rval);
             #else
-            bool succeed = func->invoke(${arg_count}, nullptr, &rval);
+            bool succeed = func->invoke(JS::HandleValueArray::empty(), &rval);
             #end if
             if (!succeed && JS_IsExceptionPending(cx)) {
                 JS_ReportPendingException(cx);
             }
             #if $ret_type.name != "void"
+            bool ok = true;
             ${ret_type.get_whole_name($generator)} ret;
             ${ret_type.to_native({"generator": $generator,
                                  "in_value": "rval",
                                  "out_value": "ret",
                                  "ntype": str($ret_type),
                                  "level": 2})};
+            JSB_PRECONDITION2(ok, cx, false, "lambda function : Error processing return value with type ${ret_type.name}");
             return ret;
             #end if
         };

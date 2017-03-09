@@ -159,3 +159,5 @@ tests/cpp-tests/Resources/audio
 
 cocos/platform/android/libcocos2dx/build
 cocos/scripting/js-bindings/proj.ios_mac/build
+cocos/platform/android/java/libs/cheetah-mobile/build/
+cocos/platform/android/java/libs/gps/build/
